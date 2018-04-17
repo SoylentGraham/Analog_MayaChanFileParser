@@ -1,0 +1,65 @@
+global proc ApplyFrame(string $ObjectName,float $Frame,float $x,float $y,float $z,float $Pitch,float $Yaw,float $Roll)
+{
+    currentTime $Frame;
+    
+    setAttr ($ObjectName+".tx") $x;
+    setKeyframe ($ObjectName+".tx");
+    setAttr ($ObjectName+".ty") $y;
+    setKeyframe ($ObjectName+".ty");
+    setAttr ($ObjectName+".tz") $z;
+    setKeyframe ($ObjectName+".tz");
+
+    warning "These might not be right for rotations"
+   
+    setAttr ($ObjectName+".rx") $Pitch;
+    setKeyframe ($ObjectName+".rx");
+    setAttr ($ObjectName+".ry") $Yaw;
+    setKeyframe ($ObjectName+".ry");
+    setAttr ($ObjectName+".rz") $Roll;
+    setKeyframe ($ObjectName+".rz");
+
+}
+
+global proc LoadApplyFile()
+{
+    string $ChanFilter = "*.chan";
+    string $FileName = `fileDialog2 -fileFilter $ChanFilter`;
+    error Find;
+    string $ObjectNames = `ls -selection`;
+    print $ObjectNames;
+    string $ObjectName = $ObjectNames[0];
+    print $Objects;
+
+    //open the file for reading
+    $fileId=`fopen $fileName "r"`;
+
+    //get the first line of text
+    string $nextLine = `fgetline $fileId`;
+
+    while ( size( $nextLine ) > 0 )
+    {
+        //tokenize(split) line into separate elements of an array
+        string $rawAnimArray[];
+        tokenize ($nextLine, " ",$rawAnimArray);
+        //place each element of the array into separate variables
+        print $rawAnimArray;
+        float $Frame=$rawAnimArray[0];
+        float $x=$rawAnimArray[1];
+        float $y=$rawAnimArray[2];
+        float $z=$rawAnimArray[3];
+        float $Pitch=$rawAnimArray[3];
+        float $Yaw=$rawAnimArray[4];
+        float $Roll=$rawAnimArray[5];
+
+        //  change the currentTime and set keys for tx, ty, tz
+        ApplyFrame( $ObjectName, $Frame, $x, $y, $z, $Pitch, $Yaw, $Roll );
+
+        //get the next line in the ascii file.
+        $nextLine = `fgetline $fileId`;
+    }
+    //close file
+    fclose $fileId;
+}
+
+
+LoadApplyFile();
