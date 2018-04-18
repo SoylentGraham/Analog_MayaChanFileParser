@@ -11,7 +11,10 @@ global proc ApplyFrame(string $ObjectName,float $Frame,float $x,float $y,float $
 
     warning "These might not be right for rotations"
    
-    setAttr ($ObjectName+".rx") $Pitch;
+    // print ($ObjectName+".rx");
+    // print $Pitch;
+    
+    setAttr ($ObjectName+".rotateX") $Pitch;
     setKeyframe ($ObjectName+".rx");
     setAttr ($ObjectName+".ry") $Yaw;
     setKeyframe ($ObjectName+".ry");
@@ -23,17 +26,22 @@ global proc ApplyFrame(string $ObjectName,float $Frame,float $x,float $y,float $
 global proc LoadApplyFile()
 {
     string $ChanFilter = "*.chan";
-    string $FileName = `fileDialog2 -fileFilter $ChanFilter`;
-    error Find;
-    string $ObjectNames = `ls -selection`;
-    print $ObjectNames;
+    $FileNames = `fileDialog2 -fileMode 1 -fileFilter $ChanFilter`;
+    string $FileName = $FileNames[0];
+    print $FileName;
+    // $FileName  = "C:/Users/sreeves/Downloads/CameraPath_55245056_55265956_left_to_front_to_right.chan";
+    
+    // error Find;
+
+    $ObjectNames = `ls -selection`;
+    // print $ObjectNames;
     string $ObjectName = $ObjectNames[0];
-    print $Objects;
+    // print $ObjectName;
 
-    //open the file for reading
-    $fileId=`fopen $fileName "r"`;
+    // open the file for reading
+    $fileId = `fopen $FileName "r"`;
 
-    //get the first line of text
+    // get the first line of text
     string $nextLine = `fgetline $fileId`;
 
     while ( size( $nextLine ) > 0 )
@@ -41,8 +49,9 @@ global proc LoadApplyFile()
         //tokenize(split) line into separate elements of an array
         string $rawAnimArray[];
         tokenize ($nextLine, " ",$rawAnimArray);
+        
         //place each element of the array into separate variables
-        print $rawAnimArray;
+        // print $rawAnimArray;
         float $Frame=$rawAnimArray[0];
         float $x=$rawAnimArray[1];
         float $y=$rawAnimArray[2];
