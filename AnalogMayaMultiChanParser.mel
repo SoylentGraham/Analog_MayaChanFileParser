@@ -1,0 +1,68 @@
+global proc ApplyMultiChanFrame(string $ObjectNames[],int $ObjectIndex,int $Frame,float $x,float $y,float $z,string $ObjectLabel)
+{
+    int $ObjectCount = size($ObjectNames);
+    if ( $ObjectIndex >= $ObjectCount )
+        return;
+
+    currentTime $Frame;
+    $ObjectName = $ObjectNames[$ObjectIndex];
+
+    setAttr ($ObjectName+".tx") $x;
+    setKeyframe ($ObjectName+".tx");
+    setAttr ($ObjectName+".ty") $y;
+    setKeyframe ($ObjectName+".ty");
+    setAttr ($ObjectName+".tz") $z;
+    setKeyframe ($ObjectName+".tz");
+
+	//	gr: rename here, but then object names are wrong. do it explicity (at the end?
+    //  set name
+    //setAttr ($ObjectName+".NAME") $ObjectLabel;
+
+}
+
+global proc LoadAndApplyMultiChanFile()
+{
+    string $ChanFilter = "*.multichan";
+    $FileNames = `fileDialog2 -fileMode 1 -fileFilter $ChanFilter`;
+    string $FileName = $FileNames[0];
+    print $FileName;
+    // $FileName  = "C:/Users/sreeves/Downloads/CameraPath_55245056_55265956_left_to_front_to_right.chan";
+    
+    // error Find;
+
+    $ObjectNames = `ls -selection`;
+    // print $ObjectNames;
+
+    // open the file for reading
+    $fileId = `fopen $FileName "r"`;
+
+    // get the first line of text
+    string $nextLine = `fgetline $fileId`;
+
+    while ( size( $nextLine ) > 0 )
+    {
+        //tokenize(split) line into separate elements of an array
+        string $rawAnimArray[];
+        tokenize ($nextLine, " ",$rawAnimArray);
+        
+        //place each element of the array into separate variables
+        // print $rawAnimArray;
+        int $FrameNumber = $rawAnimArray[0];
+        int $ObjectIndex = $rawAnimArray[1];
+        float $x = $rawAnimArray[2];
+        float $y = $rawAnimArray[3];
+        float $z = $rawAnimArray[4];
+        string $ObjectLabel = $rawAnimArray[5];
+
+        //  change the currentTime and set keys for tx, ty, tz
+        ApplyMultiChanFrame( $ObjectNames, $ObjectIndex, $Frame, $x, $y, $z, $ObjectLabel );
+
+        //get the next line in the ascii file.
+        $nextLine = `fgetline $fileId`;
+    }
+    //close file
+    fclose $fileId;
+}
+
+
+ApplyMultiChanFrame();
