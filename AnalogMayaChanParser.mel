@@ -1,4 +1,4 @@
-global proc ApplyFrame(string $ObjectName,float $Frame,float $x,float $y,float $z,float $Pitch,float $Yaw,float $Roll)
+global proc ApplyChanFrame(string $ObjectName,float $Frame,float $x,float $y,float $z,float $Pitch,float $Yaw,float $Roll)
 {
     currentTime $Frame;
     
@@ -8,12 +8,7 @@ global proc ApplyFrame(string $ObjectName,float $Frame,float $x,float $y,float $
     setKeyframe ($ObjectName+".ty");
     setAttr ($ObjectName+".tz") $z;
     setKeyframe ($ObjectName+".tz");
-
-    warning "These might not be right for rotations"
-   
-    // print ($ObjectName+".rx");
-    // print $Pitch;
-    
+  
     setAttr ($ObjectName+".rotateX") $Pitch;
     setKeyframe ($ObjectName+".rx");
     setAttr ($ObjectName+".ry") $Yaw;
@@ -23,7 +18,7 @@ global proc ApplyFrame(string $ObjectName,float $Frame,float $x,float $y,float $
 
 }
 
-global proc LoadApplyFile()
+global proc LoadAndApplyChanFile()
 {
     string $ChanFilter = "*.chan";
     $FileNames = `fileDialog2 -fileMode 1 -fileFilter $ChanFilter`;
@@ -31,8 +26,6 @@ global proc LoadApplyFile()
     print $FileName;
     // $FileName  = "C:/Users/sreeves/Downloads/CameraPath_55245056_55265956_left_to_front_to_right.chan";
     
-    // error Find;
-
     $ObjectNames = `ls -selection`;
     // print $ObjectNames;
     string $ObjectName = $ObjectNames[0];
@@ -56,12 +49,12 @@ global proc LoadApplyFile()
         float $x=$rawAnimArray[1];
         float $y=$rawAnimArray[2];
         float $z=$rawAnimArray[3];
-        float $Pitch=$rawAnimArray[3];
-        float $Yaw=$rawAnimArray[4];
-        float $Roll=$rawAnimArray[5];
+        float $Pitch=$rawAnimArray[4];
+        float $Yaw=$rawAnimArray[5];
+        float $Roll=$rawAnimArray[6];
 
         //  change the currentTime and set keys for tx, ty, tz
-        ApplyFrame( $ObjectName, $Frame, $x, $y, $z, $Pitch, $Yaw, $Roll );
+        ApplyChanFrame( $ObjectName, $Frame, $x, $y, $z, $Pitch, $Yaw, $Roll );
 
         //get the next line in the ascii file.
         $nextLine = `fgetline $fileId`;
@@ -71,4 +64,4 @@ global proc LoadApplyFile()
 }
 
 
-LoadApplyFile();
+LoadAndApplyChanFile();
