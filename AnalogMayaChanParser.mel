@@ -1,6 +1,6 @@
-global proc ApplyChanFrame(string $ObjectName,float $Frame,float $x,float $y,float $z,float $Pitch,float $Yaw,float $Roll)
+global proc ApplyChanFrame(string $ObjectName,float $FrameIndex,float $x,float $y,float $z,float $Pitch,float $Yaw,float $Roll)
 {
-    currentTime $Frame;
+    currentTime $FrameIndex;
     
     setAttr ($ObjectName+".tx") $x;
     setKeyframe ($ObjectName+".tx");
@@ -45,7 +45,7 @@ global proc LoadAndApplyChanFile()
         
         //place each element of the array into separate variables
         // print $rawAnimArray;
-        float $Frame=$rawAnimArray[0];
+        float $FrameIndex=$rawAnimArray[0];
         float $x=$rawAnimArray[1];
         float $y=$rawAnimArray[2];
         float $z=$rawAnimArray[3];
@@ -54,7 +54,7 @@ global proc LoadAndApplyChanFile()
         float $Roll=$rawAnimArray[6];
 
         //  change the currentTime and set keys for tx, ty, tz
-        ApplyChanFrame( $ObjectName, $Frame, $x, $y, $z, $Pitch, $Yaw, $Roll );
+        ApplyChanFrame( $ObjectName, $FrameIndex, $x, $y, $z, $Pitch, $Yaw, $Roll );
 
         //get the next line in the ascii file.
         $nextLine = `fgetline $fileId`;
